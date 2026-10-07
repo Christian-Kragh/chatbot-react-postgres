@@ -1,22 +1,31 @@
+
+function Message({ props }) {
+  return (
+    <div className={`message ${props.type}-message`}>
+
+    </div>
+  )
+}
+
 export default function Home() {
   return (
     <main className="chat-container">
       <div className="chat-messages">
         {/* Chat message 1 */}
-        <div className="message user-message">
-          <div className="message-content">
-            Hello! Can you help me understand React Router v7?
-          </div>
+        <Message />
+        <div className="message-content">
+          Hello! Can you help me understand React Router v7?
         </div>
 
-        <div className="message bot-message">
-          <div className="message-content">
-            Of course! React Router v7 is the latest version that introduces
-            several improvements including better data loading, enhanced nested
-            routing, and improved TypeScript support. What specific aspect would
-            you like to learn about?
-          </div>
+        <Message />
+
+        <div className="message-content">
+          Of course! React Router v7 is the latest version that introduces
+          several improvements including better data loading, enhanced nested
+          routing, and improved TypeScript support. What specific aspect would
+          you like to learn about?
         </div>
+
 
         {/* Chat message 2 */}
         <div className="message user-message">
