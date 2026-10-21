@@ -1,10 +1,64 @@
-import { Outlet } from "react-router";
+
+import { Outlet, useLoaderData, redirect } from "react-router";
 import Sidebar from "../components/Sidebar.jsx";
 
+export async function clientLoader() {
+
+  const apiUrl = import.meta.env.VITE_API_URL
+
+  const url = `${apiUrl}/api/threads`
+
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch threads: ${response.status}`)
+  }
+
+  const threads = await response.json()
+
+  return { threads }
+}
+
+export async function clientAction({ request }) {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+  const formData = await request.formData()
+  const intent = formData.get("intent")
+  const threadId = formData.get("threadId")
+
+  if (intent === "delete" && threadId) {
+    try {
+      const response = await fetch(
+        `${supabaseUrl}/rest/v1/threads?id=eq.${threadId}`,
+        {
+          method: "DELETE",
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`
+          }
+        }
+      )
+
+      if (!response.ok) {
+        return { error: `Failed to delete thread: ${response.status}` }
+      }
+
+      return { succes: true }
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  return null
+}
+
 export default function Layout() {
+  const { threads } = useLoaderData()
+
   return (
     <div className="app-layout">
-      <Sidebar />
+      <Sidebar threads={threads} />
       <main className="main-content">
         <Outlet />
       </main>

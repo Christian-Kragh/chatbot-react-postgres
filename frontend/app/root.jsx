@@ -7,11 +7,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-// Styles imported here will be bundled into the app automatically
 import "./app.css";
 
-// Add links to external stylesheets, fonts, etc. here
-// https://reactrouter.com/start/framework/route-module#links
 export const links = () => [];
 
 export function Layout({ children }) {

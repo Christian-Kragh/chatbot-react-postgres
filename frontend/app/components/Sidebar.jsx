@@ -1,49 +1,91 @@
 
-function SideBarHeader() {
+import React from "react";
+import { href, Link, NavLink, useFetcher } from "react-router"
+
+function SidebarHeader() {
   return (
     <div className="sidebar-header">
       <h2 className="chatbot-title">Chatbot</h2>
-      <a href="/chat/new" className="new-chat-btn">
+      <Link to="/chat/new" className="new-chat-btn">
         + New
-      </a>
+      </Link>
     </div>
-  )
+  );
 }
 
-function ChatThreadItem(props) {
+function ChatThreadItem({ thread }) {
+
+  const { id, title } = thread
+  const fetcher = useFetcher()
+
+  const handleDeleteClick = (event) => {
+    event.stopPropagation();
+
+    if (onDeleteThread) {
+      onDeleteThread(id)
+    }
+  }
+
+  const isDeleting = fetcher.state !== "idle" && fetcher.formData?.get("threadId") === id
+
   return (
     <li className="chat-thread-item">
-      <a href={props.href} className="chat-thread-link">
-        {props.title}
-      </a>
+      <div className="chat-thread-item-content">
+        <NavLink
+          to={href("/chat/:threadId", { threadId: id })}
+          className={({ isActive }) =>
+            isActive
+              ? "chat-thread-link chat-thread-link-active"
+              : "chat-thread-link"
+          }
+        >
+          {title}
+        </NavLink>
+        <fetcher.Form method="post">
+          <input type="hidden" name="intent" value="delete" />
+          <input type="hidden" name="threadId" value={id} />
+          <button
+            className="delete-thread-btn"
+            aria-label={`Delete thread: ${title}`}
+            title="Delete this conversation"
+            type="submit"
+            disabled={isDeleting}
+          >
+            {isDeleting ? "···" : "×"}
+          </button>
+
+        </fetcher.Form>
+      </div>
     </li>
-  )
+  );
 }
 
-function ChatThreadsList() {
+function ChatThreadsList({ threads = [] }) {
+
+  const [searchValue, setSearchValue] = React.useState("")
+
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value)
+  }
+
+  const filteredThreads = threads.filter((thread) => thread.title.toLowerCase().includes(searchValue.toLowerCase()),)
+
   return (
     <nav className="chat-threads-list" aria-label="Chat threads">
+      <div className="search-container">
+        <input type="text" className="search-input" placeholder="Search conversations..." value={searchValue} onChange={handleSearchChange} />
+      </div>
+
       <ul>
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
-        <ChatThreadItem />
+        {filteredThreads.map((thread) => (
+          <ChatThreadItem key={thread.id} thread={thread} />
+        ))}
       </ul>
     </nav>
-  )
+  );
 }
 
-function SideBarFooter() {
+function SidebarFooter() {
   return (
     <div className="sidebar-footer">
       <a href="/profile" className="user-profile">
@@ -57,18 +99,15 @@ function SideBarFooter() {
         <span className="user-name">Batman</span>
       </a>
     </div>
-  )
+  );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ threads }) {
   return (
     <aside className="sidebar">
-      {/* Sidebar header */}
-      <SideBarHeader />
-      {/* Chat threads list */}
-      <ChatThreadsList />
-      {/* Sidebar footer */}
-      <SideBarFooter />
+      <SidebarHeader />
+      <ChatThreadsList threads={threads} />
+      <SidebarFooter />
     </aside>
-  )
+  );
 }
