@@ -1,5 +1,5 @@
 
-import { useLoaderData, useActionData, Link, useRouteError, href } from "react-router"
+import { useLoaderData, useActionData, Link, useRouteError, href, Outlet, useNavigation } from "react-router"
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 
 export function ErrorBoundary() {
@@ -98,12 +98,36 @@ export default function ChatThread() {
     const { thread, messages } = useLoaderData();
     const actionData = useActionData();
 
+    const navigation = useNavigation()
+
+    let displayMessages = [...messages]
+
+    if (navigation.formData?.has("message")) {
+        const optimisticUserMessage = {
+            id: "optimistic-user",
+            type: "user",
+            content: navigation.formData.get("message")
+        }
+
+        const optimisticBotMessage = {
+            id: "optimistic-bot",
+            type: "bot",
+            content: "AI is thinking..."
+        }
+
+        displayMessages.push(optimisticUserMessage, optimisticBotMessage)
+    }
+
     return (
         <main className="chat-container">
+            <Outlet />
             <div className="chat-thread-header">
                 <h2>{thread.title}</h2>
+                <Link to="edit" className="thread-title-edit-link">
+                    Edit
+                </Link>
             </div>
-            <ChatMessages messages={messages} />
+            <ChatMessages messages={displayMessages} />
             <ChatInput />
             {actionData?.error && (
                 <div className="error-message">{actionData.error}</div>
