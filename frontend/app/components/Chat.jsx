@@ -1,5 +1,4 @@
 
-import React from "react";
 import { Form } from "react-router";
 
 function Message({ type, children }) {

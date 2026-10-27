@@ -233,9 +233,12 @@ body {
 }
 
 .chat-thread-header {
-  text-align: center;
   padding: 3rem 2rem;
   color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .chat-messages {
@@ -247,6 +250,88 @@ body {
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
+}
+
+.thread-title-edit-link {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border: 1px solid var(--border-medium);
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  transition: background 0.1s ease;
+}
+
+.thread-title-edit-link:hover {
+  background: var(--bg-hover);
+}
+
+.edit-title-overlay {
+  width: 100%;
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.edit-title-form {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: end;
+  gap: 0.75rem;
+}
+
+.form-field {
+  flex-grow: 1;
+}
+
+.form-field label {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.title-input {
+  width: 100%;
+  border: 1px solid var(--border-medium);
+  border-radius: 6px;
+  padding: 0.65rem;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.save-button,
+.cancel-button {
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-decoration: none;
+}
+
+.save-button {
+  background: var(--bg-button-primary);
+  color: var(--text-button);
+}
+
+.save-button:hover {
+  background: var(--bg-button-primary-hover);
+}
+
+.cancel-button {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.cancel-button:hover {
+  background: var(--bg-secondary);
 }
 
 .message {
