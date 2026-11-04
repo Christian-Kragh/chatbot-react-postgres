@@ -1,14 +1,12 @@
 
 import { Outlet, useLoaderData, redirect } from "react-router";
 import Sidebar from "../components/Sidebar.jsx";
+import { apiFetch } from "../lib/apiFetch.js";
+import { supabase } from "../lib/supabase.js";
 
 export async function clientLoader() {
 
-  const apiUrl = import.meta.env.VITE_API_URL
-
-  const url = `${apiUrl}/api/threads`
-
-  const response = await fetch(url)
+  const response = await apiFetch("/api/threads")
 
   if (!response.ok) {
     throw new Error(`Failed to fetch threads: ${response.status}`)
@@ -20,15 +18,16 @@ export async function clientLoader() {
 }
 
 export async function clientAction({ request }) {
-  const apiUrl = import.meta.env.VITE_API_URL
 
   const formData = await request.formData()
   const intent = formData.get("intent")
-  const threadId = formData.get("threadId")
 
-  if (intent === "delete" && threadId) {
+  if (intent === "delete") {
+    
+    const threadId = formData.get("threadId")
+
     try {
-      const response = await fetch(`${apiUrl}/api/threads/${threadId}`,
+      const response = await apiFetch(`/api/threads/${threadId}`,
         {
           method: "DELETE"
         }
@@ -42,6 +41,16 @@ export async function clientAction({ request }) {
     } catch (error) {
       return { error: error.message }
     }
+  }
+
+  if (intent === "logout") {
+    const { error } = await supabase.auth.signOut()
+
+    if (error) {
+      console.error("Error signing out:", error.message)
+    }
+
+    return redirect("/login")
   }
 
   return null

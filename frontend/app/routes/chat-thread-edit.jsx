@@ -1,4 +1,5 @@
 import { useActionData, Form, redirect, Link, useRouteLoaderData } from 'react-router'
+import { apiFetch } from '../lib/apiFetch'
 
 export default function ChatThreadEdit() {
 
@@ -38,7 +39,6 @@ export default function ChatThreadEdit() {
 }
 
 export async function clientAction({ params, request }) {
-    const apiUrl = import.meta.env.VITE_API_URL
     const formData = await request.formData()
     const title = formData.get("title")
 
@@ -47,7 +47,7 @@ export async function clientAction({ params, request }) {
     }
 
     try {
-        const response = await fetch(`${apiUrl}/api/threads/${params.threadId}`,
+        const response = await apiFetch(`/api/threads/${params.threadId}`,
             {
                 method: "PATCH",
                 headers: {

@@ -213,24 +213,26 @@ app.post("/api/threads", async (request, response) => {
             })
         }
 
-        const threads = await sql`
-        INSERT INTO threads (title)
-        VALUES (${trimmedTitle})
-        RETURNING id, title, created_at
-        `;
+        const TEST_USER_ID = "00000001-0001-0001-0001-000000000001";
 
-        const thread = threads[0]
+        const { thread, message } = await sql.begin(async (sql) => {
 
-        const messages = await sql`
-        INSERT INTO messages (thread_id, type, content)
-        VALUES (${thread.id}, 'user', ${trimmedContent})
-        RETURNING id, thread_id, type, content, created_at
-        `;
+            const [thread] = await sql`
+            INSERT INTO threads (title, user_id)
+            VALUES (${trimmedTitle}, ${TEST_USER_ID})
+            RETURNING id, title, created_at
+            `;
 
-        return response.status(201).json({
-            thread: thread,
-            message: messages[0]
+            const [message] = await sql`
+            INSERT INTO messages (thread_id, type, content)
+            VALUES (${thread.id}, 'user', ${trimmedContent})
+            RETURNING id, thread_id, type, content, created_at
+            `;
+
+            return { thread, message }
         })
+
+        return response.status(201).json({ thread, message })
     }
     catch (error) {
         console.error("Error creating thread:", error)

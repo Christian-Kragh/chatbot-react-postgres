@@ -7,5 +7,7 @@ export default [
         route("chat/:threadId", "routes/chat-thread.jsx", [
             route("edit", "routes/chat-thread-edit.jsx")
         ])
-    ])
+    ]),
+    route("login", "routes/login.jsx"),
+    route("register", "routes/register.jsx")
 ];

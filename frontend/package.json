@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-router/node": "^7.7.1",
     "@react-router/serve": "^7.7.1",
+    "@supabase/supabase-js": "^2.118.0",
     "isbot": "^5.1.27",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -19,7 +20,11 @@
   },
   "devDependencies": {
     "@react-router/dev": "^7.7.1",
+    "baseline-browser-mapping": "^2.11.34",
     "prettier": "^3.6.2",
     "vite": "^6.3.3"
+  },
+  "allowScripts": {
+    "esbuild@0.25.10": true
   }
 }

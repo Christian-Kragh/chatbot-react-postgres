@@ -1,6 +1,7 @@
 
 import { useLoaderData, useActionData, Link, useRouteError, href, Outlet, useNavigation } from "react-router"
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
+import { apiFetch } from "../lib/apiFetch.js";
 
 export function ErrorBoundary() {
     const error = useRouteError()
@@ -26,9 +27,7 @@ export function ErrorBoundary() {
 
 export async function clientLoader({ params }) {
 
-    const apiUrl = import.meta.env.VITE_API_URL
-    const threadUrl = `${apiUrl}/api/threads/${params.threadId}`;
-    const threadResponse = await fetch(threadUrl)
+    const threadResponse = await apiFetch(`/api/threads/${params.threadId}`)
 
     if (threadResponse.status === 400) {
         throw new Response("Thread not found", { status: 404 })
@@ -40,8 +39,7 @@ export async function clientLoader({ params }) {
 
     const thread = await threadResponse.json()
 
-    const messageUrl = `${apiUrl}/api/threads/${params.threadId}/messages`
-    const messagesResponse = await fetch(messageUrl)
+    const messagesResponse = await apiFetch(`/api/threads/${params.threadId}/messages`)
 
 
     if (!messagesResponse.ok) {
@@ -54,7 +52,6 @@ export async function clientLoader({ params }) {
 }
 
 export async function clientAction({ params, request }) {
-    const apiUrl = import.meta.env.VITE_API_URL
 
     const formData = await request.formData()
     const content = formData.get("message")
@@ -69,7 +66,7 @@ export async function clientAction({ params, request }) {
     }
 
     try {
-        const response = await fetch(`${apiUrl}/api/threads/${params.threadId}/messages`,
+        const response = await apiFetch(`/api/threads/${params.threadId}/messages`,
             {
                 method: "POST",
                 headers: {

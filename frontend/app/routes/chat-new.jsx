@@ -1,9 +1,9 @@
 import { useActionData, redirect } from "react-router";
 import { ChatInput, ChatMessages } from "../components/Chat.jsx";
+import { apiFetch } from "../lib/apiFetch.js";
 
 export async function clientAction({ request }) {
 
-    const apiUrl = import.meta.env.VITE_API_URL
     const formData = await request.formData();
     const content = formData.get("message");
 
@@ -16,7 +16,7 @@ export async function clientAction({ request }) {
             ? content.trim().slice(0, 50) + "..."
             : content.trim();
     try {
-        const response = await fetch(`${apiUrl}/api/threads`, {
+        const response = await apiFetch("/api/threads", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
