@@ -83,22 +83,6 @@ export default function Login() {
                 <p className="auth-footer">
                     Don't have an account? <Link to="/register">Sign up</Link>
                 </p>
-
-
-                {/* Educational hint */}
-                {/* <div className="auth-hint">
-                    <p>
-                        💡 <strong>Explore JWTs:</strong> After logging in, open DevTools →
-                        Application → Local Storage to see your JWT token. Copy it and paste
-                        it at{" "}
-                        <a href="https://jwt.io" target="_blank" rel="noopener noreferrer">
-                            jwt.io
-                        </a>{" "}
-                        to decode it!
-                    </p>
-                </div> */}
-
-
             </div>
         </div>
     )

@@ -1,0 +1,21 @@
+{
+  "name": "chatbot-react-postgres",
+  "version": "1.0.0",
+  "description": "This repository serves as a reference implementation for a classroom project where students build a chatbot UI with full CRUD functionality, progressing from basic React components to a complete full-stack application with custom API and database integration.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Christian-Kragh/chatbot-react-postgres.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Christian-Kragh/chatbot-react-postgres/issues"
+  },
+  "homepage": "https://github.com/Christian-Kragh/chatbot-react-postgres#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6"
+  }
+}
