@@ -23,7 +23,10 @@ export async function clientAction({ request }) {
     console.log("Login succesful! User:", data.email)
     console.log("JWT token has been stored in localStorage")
 
-    return redirect("/")
+    const url = new URL(request.url)
+    const redirectTo = url.searchParams.get("redirect") || "/"
+
+    return redirect(redirectTo)
 }
 
 export default function Login() {
@@ -33,6 +36,7 @@ export default function Login() {
 
     const [searchParams] = useSearchParams()
     const justRegistered = searchParams.get("registered") === "true"
+    const wasRedirected = searchParams.has("redirect")
 
     return (
         <div className="auth-container">
@@ -43,6 +47,12 @@ export default function Login() {
                 {justRegistered && (
                     <div className="succes-message">
                         Account created succesfully! Please log in
+                    </div>
+                )}
+
+                {wasRedirected && (
+                    <div className="info-message">
+                        Your session has expired. Please log in again.
                     </div>
                 )}
 
