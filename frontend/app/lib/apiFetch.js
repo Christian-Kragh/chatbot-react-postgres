@@ -2,6 +2,7 @@
 import { supabase } from "./supabase.js"
 import { redirect } from "react-router"
 
+
 export async function apiFetch(path, options = {}) {
     const apiUrl = import.meta.env.VITE_API_URL
     const url = `${apiUrl}${path}`
@@ -13,7 +14,7 @@ export async function apiFetch(path, options = {}) {
         ...options.headers
     }
 
-    if (!token) {
+    if (token) {
         headers.Authorization = `Bearer ${token}`
     }
 

@@ -18,12 +18,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/threads", requireAuth, async (request, response) => {
-    const user_id = request.user_id
+    const user_id = request.userId
 
     try {
         const threads = await sql`
-        SELECT id, title, created_at, ${user_id}
+        SELECT id, title, user_id, created_at
         FROM threads
+        WHERE user_id = ${user_id}
         ORDER BY created_at DESC`;
 
         response.json(threads)
@@ -37,12 +38,12 @@ app.get("/api/threads", requireAuth, async (request, response) => {
 })
 
 app.get("/api/threads/:id", requireAuth, async (request, response) => {
-    const user_id = request.user_id
+    const user_id = request.userId
 
     try {
         const threadId = request.params.id
         const threads = await sql`
-            SELECT id, title, created_at
+            SELECT id, title, user_id, created_at
             FROM threads
             WHERE id = ${threadId}
             AND user_id = ${user_id}`;
@@ -65,16 +66,25 @@ app.get("/api/threads/:id", requireAuth, async (request, response) => {
 
 app.get("/api/threads/:id/messages", requireAuth, async (request, response) => {
 
-    const user_id = request.user_id
+    const user_id = request.userId
 
     try {
         const threadId = request.params.id
+
+        const threads = await sql`
+        SELECT id
+        FROM threads
+        WHERE id = ${threadId} AND user_id = ${user_id}
+        `;
+
+        if (threads.length === 0) {
+            return response.json([])
+        }
 
         const messages = await sql`
             SELECT id, thread_id, type, content, created_at
             FROM messages
             WHERE thread_id = ${threadId}
-            AND user_id = ${user_id}
             ORDER BY created_at ASC`;
 
         response.json(messages)
@@ -90,7 +100,7 @@ app.get("/api/threads/:id/messages", requireAuth, async (request, response) => {
 
 app.post("/api/threads/:id/messages", requireAuth, async (request, response) => {
 
-    const user_id = request.user_id
+    const user_id = request.userId
 
     try {
         const threadId = request.params.id
@@ -115,6 +125,18 @@ app.post("/api/threads/:id/messages", requireAuth, async (request, response) => 
             })
         }
 
+        const threads = await sql`
+        SELECT id
+        FROM threads
+        WHERE id = ${threadId} AND user_id = ${user_id}
+        `;
+
+        if (threads.length === 0) {
+            return response.status(404).json({
+                error: "Thread not found"
+            })
+        }
+
         const userMessages = await sql`
         INSERT INTO messages (thread_id, type, content)
         VALUES (${threadId}, ${type}, ${trimmedContent})
@@ -127,7 +149,6 @@ app.post("/api/threads/:id/messages", requireAuth, async (request, response) => 
         SELECT id, thread_id, type, content, created_at
         FROM messages
         WHERE thread_id = ${threadId}
-        AND user_id = ${user_id}
         ORDER BY created_at ASC
         `;
 
@@ -205,7 +226,7 @@ app.post("/api/threads/:id/messages", requireAuth, async (request, response) => 
 
 app.post("/api/threads", requireAuth, async (request, response) => {
 
-    const user_id = request.user_id
+    const user_id = request.userId
 
     try {
         const { title, content } = request.body
@@ -237,7 +258,7 @@ app.post("/api/threads", requireAuth, async (request, response) => {
             const [thread] = await sql`
             INSERT INTO threads (title, user_id)
             VALUES (${trimmedTitle}, ${user_id})
-            RETURNING id, title, created_at
+            RETURNING id, title, user_id, created_at
             `;
 
             const [message] = await sql`
@@ -261,7 +282,7 @@ app.post("/api/threads", requireAuth, async (request, response) => {
 
 app.patch("/api/threads/:id", requireAuth, async (request, response) => {
 
-    const user_id = request.user_id
+    const user_id = request.userId
 
     try {
         const threadId = request.params.id
@@ -286,7 +307,7 @@ app.patch("/api/threads/:id", requireAuth, async (request, response) => {
         SET title = ${trimmedTitle}
         WHERE id = ${threadId}
         AND user_id = ${user_id}
-        RETURNING id, title, created_at
+        RETURNING id, title, user_id, created_at
         `;
 
         if (result.length === 0) {
@@ -307,7 +328,7 @@ app.patch("/api/threads/:id", requireAuth, async (request, response) => {
 
 app.delete("/api/threads/:id", requireAuth, async (request, response) => {
 
-    const user_id = request.user_id
+    const user_id = request.userId
 
     try {
         const threadId = request.params.id

@@ -1,17 +1,21 @@
-import { createClient } from "@supabase/supabase-js"
 
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
+import { createClient } from "@supabase/supabase-js";
+
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error("Missing required environment variables: SUPABASE_URL and SUPABASE_ANON_KEY must be set")
+  throw new Error(
+    "Missing required environment variables: SUPABASE_URL and SUPABASE_ANON_KEY must be set");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function requireAuth(request, response, next) {
 
     try {
+
         const authHeader = request.headers.authorization
 
         if (!authHeader) {
@@ -38,7 +42,6 @@ export async function requireAuth(request, response, next) {
 
         request.userId = user.id
         next()
-
     }
     catch (error) {
         console.error("Authentication error:", error)

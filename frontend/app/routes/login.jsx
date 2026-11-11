@@ -20,7 +20,7 @@ export async function clientAction({ request }) {
         return { error: "Invalid email or password" }
     }
 
-    console.log("Login succesful! User:", data.email)
+    console.log("Login succesful! User:", data.user.email)
     console.log("JWT token has been stored in localStorage")
 
     const url = new URL(request.url)
